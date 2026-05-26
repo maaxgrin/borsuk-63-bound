@@ -1,4 +1,4 @@
-Borsuk_63_note
+# Borsuk 63 note
 
 This repository contains a proof note and an exact finite verification script for a 63-dimensional construction related to Borsuk's conjecture. It gives
 
@@ -12,7 +12,9 @@ The construction starts from the \(G_2(4)\) strongly regular graph described by 
 
 The principle of the proof is as follows. In the standard \(65\)-dimensional representation of \(G_2(4)\), an isotropic point \(q_0\) defines a partition \(B_1,B_2,B_3,C\) of the vertices. The \(320\) points indexed by \(C\) are orthogonal to a 2-dimensional space spanned by three block sums, hence lie in a 63-dimensional subspace. One then adds a single projected point \(p\) in the same subspace, chosen so that the diameter remains the original large distance. The absence of a \(6\)-clique in \(G_2(4)\) then implies that every smaller-diameter part has at most \(5\) points, so \(321\) points require at least \(65>64\) parts.
 
-1. Quoted input.
+The final \(321\)-point set is not asserted to be a two-distance set; the two-distance input is the standard \(G_2(4)\) representation on the points \(x_v\).
+
+## 1. Quoted input
 
 This part records the standard graph-theoretic and Euclidean facts used as input.
 
@@ -63,7 +65,7 @@ $$
 
 The script `verify_borsuk63.py` reconstructs the graph and verifies this obstruction again.
 
-2. The finite partition.
+## 2. The finite partition
 
 This part defines the partition, from an isotropic point \(q_0\), whose verified degree data will be used for the dimension drop.
 
@@ -97,7 +99,7 @@ $$
 \end{aligned}
 $$
 
-3. Dimension reduction.
+## 3. Dimension reduction
 
 This part shows that the \(320\) points indexed by \(C\) lie in a codimension-\(2\) subspace of the standard \(\mathbb R^{65}\) representation.
 
@@ -141,7 +143,7 @@ $$
 
 has dimension \(63\), and all points \(x_c\), \(c\in C\), lie in this subspace.
 
-4. The added point.
+## 4. The added point
 
 This part constructs one further point in the same 63-dimensional subspace and records its products with the points indexed by \(C\).
 
@@ -198,7 +200,7 @@ $$
 
 Since \(\|p\|^2=78t^2\ne90=\|x_c\|^2\) for \(c\in C\), the point \(p\) is not one of the \(x_c\). Thus \(X\subset\mathbb R^{63}\) and \(|X|=321\).
 
-5. Diameter and clique obstruction.
+## 5. Diameter and clique obstruction
 
 This part computes the diameter of the resulting \(321\)-point set and uses the clique obstruction to bound smaller-diameter subsets.
 
@@ -250,7 +252,7 @@ $$
 d_B\le63.
 $$
 
-6. Verification.
+## 6. Verification
 
 This part gives the command reproducing the finite checks used above.
 
@@ -293,7 +295,7 @@ b 0 NbC size 80 has K5 on NbC False
 all exact verification checks passed
 ```
 
-References.
+## References
 
 <a id="Bon2014"></a>[Bon2014] A. V. Bondarenko, *On Borsuk's conjecture for two-distance sets*, Discrete & Computational Geometry 51 (2014), 509--515. Preprint: https://arxiv.org/abs/1305.2584
 

@@ -14,6 +14,11 @@ clique obstructions that force every smaller-diameter part to have size at most
 MOD_POLY = 0b10011  # x^4 + x + 1; xor clears the overflow x^4 bit.
 
 
+def check(condition, message):
+    if not condition:
+        raise RuntimeError(message)
+
+
 def gf_mul(a, b):
     out = 0
     aa = a
@@ -41,7 +46,7 @@ def gf_pow(a, e):
 INV = [0] * 16
 for a in range(1, 16):
     INV[a] = gf_pow(a, 14)
-    assert gf_mul(a, INV[a]) == 1
+    check(gf_mul(a, INV[a]) == 1, f"bad inverse for field element {a}")
 
 
 def gf_div(a, b):
@@ -126,7 +131,10 @@ def clique_witness(adj, vertices, size):
 
 
 def main():
-    assert all(gf_mul(a, b) == gf_mul(b, a) for a in range(16) for b in range(16))
+    check(
+        all(gf_mul(a, b) == gf_mul(b, a) for a in range(16) for b in range(16)),
+        "field multiplication is not commutative",
+    )
 
     points = []
     seen = set()
@@ -139,13 +147,13 @@ def main():
             points.append(p)
     points.sort()
     print("projective points", len(points))
-    assert len(points) == 273
+    check(len(points) == 273, f"expected 273 projective points, got {len(points)}")
 
     isotropic = [p for p in points if hermitian(p, p) == 0]
     nonisotropic = [p for p in points if hermitian(p, p) != 0]
     print("isotropic", len(isotropic), "nonisotropic", len(nonisotropic))
-    assert len(isotropic) == 65
-    assert len(nonisotropic) == 208
+    check(len(isotropic) == 65, f"expected 65 isotropic points, got {len(isotropic)}")
+    check(len(nonisotropic) == 208, f"expected 208 nonisotropic points, got {len(nonisotropic)}")
 
     iso_index = {p: i for i, p in enumerate(isotropic)}
     noniso_index = {p: i for i, p in enumerate(nonisotropic)}
@@ -161,14 +169,14 @@ def main():
         if orth[i][j] and orth[i][k] and orth[j][k]:
             vertices.append((i, j, k))
     print("vertices", len(vertices))
-    assert len(vertices) == 416
+    check(len(vertices) == 416, f"expected 416 vertices, got {len(vertices)}")
 
     triangles = []
     for tri in vertices:
         pts = set()
         for i, j in combinations(tri, 2):
             pts |= {p for p in line_points(nonisotropic[i], nonisotropic[j]) if p in iso_index}
-        assert len(pts) == 15
+        check(len(pts) == 15, f"expected isotropic triangle size 15, got {len(pts)}")
         mask = 0
         for p in pts:
             mask |= 1 << iso_index[p]
@@ -186,8 +194,8 @@ def main():
                 edge_count += 1
     degrees = sorted(set(bit_count(a) for a in adj))
     print("degrees", degrees, "edges", edge_count)
-    assert degrees == [100]
-    assert edge_count == 20800
+    check(degrees == [100], f"expected degree set [100], got {degrees}")
+    check(edge_count == 20800, f"expected 20800 edges, got {edge_count}")
 
     lambdas = set()
     mus = set()
@@ -200,8 +208,8 @@ def main():
             else:
                 mus.add(common)
     print("lambda", sorted(lambdas), "mu", sorted(mus))
-    assert lambdas == {36}
-    assert mus == {20}
+    check(lambdas == {36}, f"expected lambda set {{36}}, got {sorted(lambdas)}")
+    check(mus == {20}, f"expected mu set {{20}}, got {sorted(mus)}")
 
     q0 = isotropic[0]
     B = []
@@ -211,8 +219,8 @@ def main():
     Bset = set(B)
     C = [i for i in range(n) if i not in Bset]
     print("B size", len(B), "C size", len(C))
-    assert len(B) == 96
-    assert len(C) == 320
+    check(len(B) == 96, f"expected |B|=96, got {len(B)}")
+    check(len(C) == 320, f"expected |C|=320, got {len(C)}")
 
     Bmask = sum(1 << i for i in B)
     seen_b = set()
@@ -237,29 +245,29 @@ def main():
         comps.append(sorted(comp))
     comps.sort(key=lambda x: (len(x), x[0]))
     print("B component sizes", [len(c) for c in comps])
-    assert [len(c) for c in comps] == [32, 32, 32]
+    check([len(c) for c in comps] == [32, 32, 32], f"expected B component sizes [32, 32, 32], got {[len(c) for c in comps]}")
     B1, B2, B3 = comps
     masks = [sum(1 << i for i in comp) for comp in comps]
     Cmask = sum(1 << i for i in C)
     for a, comp in enumerate(comps):
         internal = sorted(set(bit_count(adj[v] & masks[a]) for v in comp))
         print(f"B{a+1} internal", internal)
-        assert internal == [20]
+        check(internal == [20], f"expected B{a+1} internal degree set [20], got {internal}")
         for b, mask in enumerate(masks):
             if a != b:
                 cross = sorted(set(bit_count(adj[v] & mask) for v in comp))
                 print(f"B{a+1} to B{b+1}", cross)
-                assert cross == [0]
+                check(cross == [0], f"expected B{a+1} to B{b+1} degree set [0], got {cross}")
         to_c = sorted(set(bit_count(adj[v] & Cmask) for v in comp))
         print(f"B{a+1} to C", to_c)
-        assert to_c == [80]
+        check(to_c == [80], f"expected B{a+1} to C degree set [80], got {to_c}")
     for a, mask in enumerate(masks):
         c_to_b = sorted(set(bit_count(adj[v] & mask) for v in C))
         print(f"C to B{a+1}", c_to_b)
-        assert c_to_b == [8]
+        check(c_to_b == [8], f"expected C to B{a+1} degree set [8], got {c_to_b}")
     c_internal = sorted(set(bit_count(adj[v] & Cmask) for v in C))
     print("C internal", c_internal)
-    assert c_internal == [76]
+    check(c_internal == [76], f"expected C internal degree set [76], got {c_internal}")
 
     all_vertices = list(range(n))
     k5 = clique_witness(adj, all_vertices, 5)
@@ -268,15 +276,15 @@ def main():
     print("K5 full witness", k5)
     print("has K6 full", has_k6)
     print("has K6 on C", has_k6_c)
-    assert k5 is not None
-    assert not has_k6
-    assert not has_k6_c
+    check(k5 is not None, "expected a K5 in the full graph")
+    check(not has_k6, "unexpected K6 in the full graph")
+    check(not has_k6_c, "unexpected K6 in C")
     b = B1[0]
     NbC = [v for v in C if (adj[b] >> v) & 1]
     has_k5_nbc = has_clique(adj, NbC, 5)
     print("b", b, "NbC size", len(NbC), "has K5 on NbC", has_k5_nbc)
-    assert len(NbC) == 80
-    assert not has_k5_nbc
+    check(len(NbC) == 80, f"expected |N(b) cap C|=80, got {len(NbC)}")
+    check(not has_k5_nbc, "unexpected K5 in N(b) cap C")
     print("all exact verification checks passed")
 
 
