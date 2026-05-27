@@ -1036,10 +1036,6 @@
     "g24_NbC.dimacs": {
       "sha256": "791df16f35f7915ffc6735b566b7fb3b6c28bf45de10a56345fc3950c53cba3b",
       "bytes": 9378
-    },
-    "borsuk63_metadata.json": {
-      "sha256": "5ca8af26b2149782b57382d443571ec7ccb386876892c17fbb6b7ec06f4ba15f",
-      "bytes": 11649
     }
   }
 }

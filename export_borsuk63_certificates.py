@@ -188,11 +188,6 @@ def main():
         }
 
     metadata_path.write_text(json.dumps(metadata, indent=2) + "\n", encoding="ascii")
-    metadata["files"][metadata_path.name] = {
-        "sha256": file_sha256(metadata_path),
-        "bytes": metadata_path.stat().st_size,
-    }
-    metadata_path.write_text(json.dumps(metadata, indent=2) + "\n", encoding="ascii")
 
     for path in [full, c_graph, nbc_graph, metadata_path]:
         print(f"{path.relative_to(ROOT)} {file_sha256(path)}")

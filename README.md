@@ -5,7 +5,7 @@ This repository contains:
 - [borsuk_63_counterexample.pdf](borsuk_63_counterexample.pdf): proof of \(d_B\le 63\);
 - [verify_borsuk63.py](verify_borsuk63.py): exact finite verification used in the proof;
 - [certificates/](certificates): DIMACS graph certificates and SHA256 metadata;
-- [verify_borsuk63_sage.sage](verify_borsuk63_sage.sage): Sage verification of the DIMACS certificates.
+- [verify_borsuk63_sage.sage](verify_borsuk63_sage.sage): independent Sage verification of the exported DIMACS certificates.
 
 Here \(d_B\) denotes the least dimension in which Borsuk's conjecture fails. The previous best published upper bound was \(d_B\le 64\), due to Jenrich and Brouwer, building on Bondarenko's \(G_2(4)\) construction.
 
@@ -29,7 +29,7 @@ To regenerate the DIMACS certificates, run:
 python export_borsuk63_certificates.py
 ```
 
-If Sage is available, the DIMACS certificates can be checked independently with:
+If Sage is available, the exported DIMACS certificates can be checked independently with:
 
 ```bash
 sage verify_borsuk63_sage.sage
