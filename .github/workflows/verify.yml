@@ -13,3 +13,5 @@ jobs:
         with:
           python-version: "3.x"
       - run: python verify_borsuk63.py
+      - run: python export_borsuk63_certificates.py
+      - run: git diff --exit-code certificates
